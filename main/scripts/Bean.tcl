@@ -25,7 +25,7 @@ itcl::class DI::Bean {
     
         if { [llength $possibleValues] != 0 } {
             if { [lsearch $possibleValues $val] == -1 } {
-                error "'${beanName}.${property}' must be set to one of: $possibleValues"
+                error "'${beanName}.${propertyName}' must be set to one of: $possibleValues"
             }
         }
     }

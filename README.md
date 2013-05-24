@@ -69,7 +69,9 @@ class Dhs::ClockLogger {
  
 Within the configuration file, classes are instantiated and public variables are configured using the following syntax:
 
-``objectName.propertyName=value``
+```
+objectName.propertyName=value
+```
  
  
 Some fixed properties are enclosed in ().  They include:
@@ -83,14 +85,13 @@ Some fixed properties are enclosed in ().  They include:
 In the following configuration file, two objects are defined: a clock and a clockLogger.  The name of the object is defined by the author of the configuration file.  Properties are set using the following syntax: objectName.propertyName=value
 
 ```Apache config files 
-    clock.(class)=Dhs::Clock
-    
-    clock.tickPeriodMs=100
-    clock.listeners(list)=(ref)clockLoggerSlow (ref)clockLoggerFast
-    clockLoggerSlow.(class)=Dhs::ClockLogger
-    clockLoggerSlow.period=60000
-    clockLoggerFast.(class)=Dhs::ClockLogger
-    clockLoggerFast.period=1000
+clock.(class)=Dhs::Clock
+clock.tickPeriodMs=100
+clock.listeners(list)=(ref)clockLoggerSlow (ref)clockLoggerFast
+clockLoggerSlow.(class)=Dhs::ClockLogger
+clockLoggerSlow.period=60000
+clockLoggerFast.(class)=Dhs::ClockLogger
+clockLoggerFast.period=1000
 ```
 
 ##Asserting value types on properties
@@ -164,4 +165,5 @@ Example:
     DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
     OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR
     THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 

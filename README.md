@@ -110,7 +110,7 @@ Example:
         assertPropertyIsaClass motor1 Dhs::MotorBase
         assertPropertyIsaClass motor2 Dhs::MotorBase
         assertPropertyIsaClass translation Dhs::MotorBase
-        assertPropertyNotEmpty MT [list -2.5 2.5.-2.0 2.0]
+        assertPropertyNotEmpty MT [list -2.5 2.5 -2.0 2.0]
     }
 ```
 

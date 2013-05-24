@@ -84,7 +84,7 @@ Some fixed properties are enclosed in ().  They include:
  
 In the following configuration file, two objects are defined: a clock and a clockLogger.  The name of the object is defined by the author of the configuration file.  Properties are set using the following syntax: objectName.propertyName=value
 
-```Apache config files 
+```
 clock.(class)=Dhs::Clock
 clock.tickPeriodMs=100
 clock.listeners(list)=(ref)clockLoggerSlow (ref)clockLoggerFast

@@ -84,6 +84,11 @@ class Car {
     inherit DI::Bean
     public variable make
     public variable year
+
+    public method afterPropertiesSet {} {
+        assertPropertyNotEmpty make
+        assertPropertyNotEmpty year
+    }
 }
 
 variable SETUP {
@@ -140,15 +145,8 @@ tcltest::test createObjectFromDependencyInjection3 {normal return} \
 tcltest::test testAssertFromDependency {failed assert test} \
     -setup $SETUP \
     -body {
-        if { [catch {$__di createObjectByName badteam} err]} {
-            if { [string first "must be instantiated from one of : Person" $err] == -1} {
-                return fail
-            }
-            return pass
-        }
-        puts "should have had an error in the assert"
-        return fail
-    } -result pass
+        $__di createObjectByName badteam
+    } -returnCodes 1 -result "::DI::DependencyInjector::address8 in 'badteam.people' must be instantiated from one of : Person"
 
 tcltest::test trimFirst {normal return} {
     DI::StringUtil::trimFirst HelloThere Hello
@@ -165,6 +163,19 @@ tcltest::test createObjectFromFactory {normal return} \
 
     return [$obj1 cget -make]    
 } -result civic
+
+#Test BeanFactory
+tcltest::test errorFromFactory {normal return} \
+    -setup $SETUP \
+    -body {
+    set carFactory [$__di createObjectByName mazdaFactory]
+    set obj1 [$carFactory create]
+    
+    delete object $carFactory
+
+    return [$obj1 cget -make]    
+} -returnCodes 1 -result "'mazda3.year' must be set"
+
 
 
 #    set filename [lindex $argv 0]

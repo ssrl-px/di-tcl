@@ -1,7 +1,7 @@
 #
 # Loads config from files
 #
-package provide DependencyInjector 3.0
+package provide DependencyInjector 3.1
 package require Itcl
 
 itcl::class DI::BeanFactory {

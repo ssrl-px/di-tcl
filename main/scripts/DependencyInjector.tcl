@@ -1,5 +1,5 @@
 #
-package provide DependencyInjector 3.0
+package provide DependencyInjector 3.1
 package require Itcl
 
 # ===================================================

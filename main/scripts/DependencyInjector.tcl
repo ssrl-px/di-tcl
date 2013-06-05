@@ -179,6 +179,9 @@ itcl::class DI::DependencyInjector {
             configureProp $obj $prop [getRefOrValue $_propArray($propName)] 
         }
         
+        if {[$obj isa DI::BeanFactory]} {
+            $obj configure -FACTORY $this 
+        }
         if {[$obj isa DI::Bean]} {
             puts "BEAN $name"
             $obj configure -beanName $name
@@ -186,9 +189,7 @@ itcl::class DI::DependencyInjector {
             if { ! $isParent } {
                 $obj afterPropertiesSet
             }
-        } else {
-            puts "WARNING: $name is not a DependencyInjectionBean"
-        }
+        } 
     }
 
     private method getRefOrValue { val_ } {

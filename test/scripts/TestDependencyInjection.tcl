@@ -80,6 +80,12 @@ class Team {
     }
 }
 
+class Car {
+    inherit DI::Bean
+    public variable make
+    public variable year
+}
+
 variable SETUP {
     set filename ../resources/DependencyInjectionData.config
     set __di [DI::DependencyInjector #auto]
@@ -147,6 +153,18 @@ tcltest::test testAssertFromDependency {failed assert test} \
 tcltest::test trimFirst {normal return} {
     DI::StringUtil::trimFirst HelloThere Hello
 } There
+
+#Test BeanFactory
+tcltest::test createObjectFromFactory {normal return} \
+    -setup $SETUP -cleanup $CLEANUP \
+    -body {
+    set carFactory [$__di createObjectByName hondaFactory]
+    set obj1 [$carFactory create]
+    
+    delete object $carFactory
+
+    return [$obj1 cget -make]    
+} -result civic
 
 
 #    set filename [lindex $argv 0]

@@ -187,7 +187,13 @@ itcl::class DI::DependencyInjector {
             $obj configure -beanName $name
             $obj configure -WORKSPACE $WORKSPACE
             if { ! $isParent } {
-                $obj afterPropertiesSet
+                if { [catch {
+                    $obj afterPropertiesSet
+                    } err ] } {
+                    #clean up
+                    delete object $obj
+                    error $err
+                }
             }
         } 
     }

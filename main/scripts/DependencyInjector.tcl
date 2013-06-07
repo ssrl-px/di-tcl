@@ -1,5 +1,5 @@
 #
-package provide DependencyInjector 3.0
+package provide DependencyInjector 3.1
 package require Itcl
 
 # ===================================================
@@ -88,11 +88,23 @@ itcl::class DI::DependencyInjector {
         set _singletonArray($name) [ItemStub #auto $className]
     }
 
-    public method createObjectByName { name } {
+    public method createObjectByName { name_ } {
+        if { [string index $name_ 0] == "&" } {
+            #trim off starting ampersand which is used to request actual bean factory
+            set requestBeanFactory true
+            set name [string range $name_ 1 end]
+        } else { 
+            set requestBeanFactory false
+            set name $name_
+        }
 
         #return singleton if exists
         if { [info exists _singletonArray($name) ] } {
-            return $_singletonArray($name)
+            set obj $_singletonArray($name)
+            if { [$obj isa DI::BeanFactory] && ! $requestBeanFactory } {
+                return [$obj getObject]
+            }
+            return $obj
         }
 
 
@@ -103,12 +115,21 @@ itcl::class DI::DependencyInjector {
             set _singletonArray($name) $obj
         }
         configureAllProp $obj $name
-        return $obj
 
+        #Bean Factories return the object they create, unless
+        #the user prepends the beanFactory name with an ampersand, in which case they return themselves
+        if { [$obj isa DI::BeanFactory] && ! $requestBeanFactory } {
+            #always set Bean Factories in the singleton array?
+            set _singletonArray($name) $obj
+            return [$obj getObject]
+        }
+
+        return $obj
     }
 
 
     private method onlyCreateObjectByName { name } {
+
         set classProp [array names _propArray -exact ${name}.$CLASS_PROP ]
         set parentProp [array names _propArray -exact ${name}.$PARENT_PROP ]
         set singletonProp [array names _propArray -exact ${name}.$SINGLETON_PROP ]
@@ -179,16 +200,23 @@ itcl::class DI::DependencyInjector {
             configureProp $obj $prop [getRefOrValue $_propArray($propName)] 
         }
         
+        if {[$obj isa DI::BeanFactory]} {
+            $obj configure -FACTORY $this 
+        }
         if {[$obj isa DI::Bean]} {
             puts "BEAN $name"
             $obj configure -beanName $name
             $obj configure -WORKSPACE $WORKSPACE
             if { ! $isParent } {
-                $obj afterPropertiesSet
+                if { [catch {
+                    $obj afterPropertiesSet
+                    } err ] } {
+                    #clean up
+                    delete object $obj
+                    error $err
+                }
             }
-        } else {
-            puts "WARNING: $name is not a DependencyInjectionBean"
-        }
+        } 
     }
 
     private method getRefOrValue { val_ } {

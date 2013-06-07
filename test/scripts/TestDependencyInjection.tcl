@@ -26,7 +26,7 @@
 #
 package require Itcl
 namespace import ::itcl::*
-package require DependencyInjector 3.0
+package require DependencyInjector 3.1
 package require tcltest
 
 
@@ -77,6 +77,17 @@ class Team {
     public variable people
     public method afterPropertiesSet {} {
         assertEachListMemberIsaClass people Person
+    }
+}
+
+class Car {
+    inherit DI::Bean
+    public variable make
+    public variable year
+
+    public method afterPropertiesSet {} {
+        assertPropertyNotEmpty make
+        assertPropertyNotEmpty year
     }
 }
 
@@ -134,19 +145,46 @@ tcltest::test createObjectFromDependencyInjection3 {normal return} \
 tcltest::test testAssertFromDependency {failed assert test} \
     -setup $SETUP \
     -body {
-        if { [catch {$__di createObjectByName badteam} err]} {
-            if { [string first "must be instantiated from one of : Person" $err] == -1} {
-                return fail
-            }
-            return pass
-        }
-        puts "should have had an error in the assert"
-        return fail
-    } -result pass
+        $__di createObjectByName badteam
+    } -returnCodes 1 -result "::DI::DependencyInjector::address8 in 'badteam.people' must be instantiated from one of : Person"
 
 tcltest::test trimFirst {normal return} {
     DI::StringUtil::trimFirst HelloThere Hello
 } There
+
+#Test BeanFactory
+tcltest::test createObjectFromFactory {normal return} \
+    -setup $SETUP -cleanup $CLEANUP \
+    -body {
+    set carFactory [$__di createObjectByName &hondaFactory]
+    set obj1 [$carFactory getObject]
+    
+    delete object $carFactory
+
+    return [$obj1 cget -make]    
+} -result civic
+
+#Test BeanFactory
+tcltest::test errorFromFactory {normal return} \
+    -setup $SETUP \
+    -body {
+    set carFactory [$__di createObjectByName &mazdaFactory]
+    set obj1 [$carFactory getObject]
+    
+    delete object $carFactory
+
+    return [$obj1 cget -make]    
+} -returnCodes 1 -result "'mazda3.year' must be set"
+
+#Test BeanFactory using the factory bean name to generate a car
+tcltest::test getCarFromFactory {normal return} \
+    -setup $SETUP \
+    -body {
+
+    set obj1 [$__di createObjectByName hondaFactory]
+
+    return [$obj1 cget -make]    
+} -result civic
 
 
 #    set filename [lindex $argv 0]

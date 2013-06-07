@@ -15,7 +15,7 @@ itcl::class DI::BeanFactory {
         assertPropertyNotEmpty bean
     }
 
-    public method create {} {
+    public method getObject {} {
         return [$FACTORY createObjectByName $bean]
     }
 

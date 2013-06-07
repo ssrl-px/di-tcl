@@ -156,8 +156,8 @@ tcltest::test trimFirst {normal return} {
 tcltest::test createObjectFromFactory {normal return} \
     -setup $SETUP -cleanup $CLEANUP \
     -body {
-    set carFactory [$__di createObjectByName hondaFactory]
-    set obj1 [$carFactory create]
+    set carFactory [$__di createObjectByName &hondaFactory]
+    set obj1 [$carFactory getObject]
     
     delete object $carFactory
 
@@ -168,14 +168,23 @@ tcltest::test createObjectFromFactory {normal return} \
 tcltest::test errorFromFactory {normal return} \
     -setup $SETUP \
     -body {
-    set carFactory [$__di createObjectByName mazdaFactory]
-    set obj1 [$carFactory create]
+    set carFactory [$__di createObjectByName &mazdaFactory]
+    set obj1 [$carFactory getObject]
     
     delete object $carFactory
 
     return [$obj1 cget -make]    
 } -returnCodes 1 -result "'mazda3.year' must be set"
 
+#Test BeanFactory using the factory bean name to generate a car
+tcltest::test getCarFromFactory {normal return} \
+    -setup $SETUP \
+    -body {
+
+    set obj1 [$__di createObjectByName hondaFactory]
+
+    return [$obj1 cget -make]    
+} -result civic
 
 
 #    set filename [lindex $argv 0]

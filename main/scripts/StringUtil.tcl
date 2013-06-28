@@ -1,5 +1,5 @@
 #
-package provide DependencyInjector 3.1
+package provide DependencyInjector 3.2
 package require Itcl
 
 itcl::class DI::StringUtil {

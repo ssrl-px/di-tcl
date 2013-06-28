@@ -26,7 +26,7 @@
 #
 package require Itcl
 namespace import ::itcl::*
-package require DependencyInjector 3.1
+package require DependencyInjector 3.2
 package require tcltest
 
 

@@ -2,8 +2,10 @@
 di-tcl
 ===========
 
+Spring inspired dependency injection for Incr Tcl.
 
-###Dependency Injection Engine
+###Dependency Injection Engine ('Bean Factory' in Spring terminology)
+
 
 ## Public methods
 * load _propertiesFile_:  Loads a plain text properties file to define all of the spring-like beans
@@ -12,7 +14,7 @@ di-tcl
 ## Example Usage
 
 ```tcl
-package require DependencyInjector 3.0
+package require DependencyInjector 3.1
 #instantiate the Dependency Injector
 set di [DI::DependencyInjector #auto ]
 #load the properties file
@@ -70,7 +72,7 @@ class Dhs::ClockLogger {
 Within the configuration file, classes are instantiated and public variables are configured using the following syntax:
 
 ```
-objectName.propertyName=value
+beanName.propertyName=value
 ```
  
  
@@ -82,7 +84,7 @@ Some fixed properties are enclosed in ().  They include:
 * (ref) modifier preceeding a value: instructs the DI engine to first create another object defined in the config file and then use this object as the property value.
 * (list) modifier appended to property value: instructs the DI engine that the property values will be a space separated list of values, which can be (ref) objects.
  
-In the following configuration file, two objects are defined: a clock and a clockLogger.  The name of the object is defined by the author of the configuration file.  Properties are set using the following syntax: objectName.propertyName=value
+In the following configuration file, two objects are defined: a clock and a clockLogger.  The name of the object is defined by the author of the configuration file.  Properties are set using the following syntax: beanName.propertyName=value
 
 ```
 clock.(class)=Dhs::Clock
@@ -115,6 +117,27 @@ Example:
 ```
 
 
+
+###Factory Bean
+
+A bean defined in the properties file with a (class) property of DI::BeanFactory will be populated with
+a bean returned by the BeanFactory's getObject method (not the BeanFactory object itself). The base DI::BeanFactory
+class takes a property, 'bean', which refers to another bean in the configuration file to be instantiated instead
+of the BeanFactory. 
+
+If a bean in the configuration file needs the BeanFactory object itself, then
+preceed the bean name of the factory with an ampersand.  In this case, calling the 'getObject' method on BeanFactory
+object from the application code will generate new instances if beans without having access or knowledge of the configuration file. 
+
+```
+spotFinder.(parent)=runScriptManager
+spotFinder.operationFactory(ref)=&spotFinderFactory
+spotFinder.maxConcurrency=20
+spotFinderFactory.(class)=DI::BeanFactory
+spotFinderFactory.bean=spotFinderOp
+spotFinderOp.(class)=Dhs::SpotFinder
+spotFinderOp.(singleton)=false
+```
 
 
 

@@ -91,17 +91,17 @@ itcl::class DI::DependencyInjector {
     public method createObjectByName { name_ } {
         if { [string index $name_ 0] == "&" } {
             #trim off starting ampersand which is used to request actual bean factory
-            set requestBeanFactory true
+            set requestFactoryBean true
             set name [string range $name_ 1 end]
         } else { 
-            set requestBeanFactory false
+            set requestFactoryBean false
             set name $name_
         }
 
         #return singleton if exists
         if { [info exists _singletonArray($name) ] } {
             set obj $_singletonArray($name)
-            if { [$obj isa DI::BeanFactory] && ! $requestBeanFactory } {
+            if { [$obj isa DI::FactoryBean] && ! $requestFactoryBean } {
                 return [$obj getObject]
             }
             return $obj
@@ -118,7 +118,7 @@ itcl::class DI::DependencyInjector {
 
         #Bean Factories return the object they create, unless
         #the user prepends the beanFactory name with an ampersand, in which case they return themselves
-        if { [$obj isa DI::BeanFactory] && ! $requestBeanFactory } {
+        if { [$obj isa DI::FactoryBean] && ! $requestFactoryBean } {
             #always set Bean Factories in the singleton array?
             set _singletonArray($name) $obj
             return [$obj getObject]
@@ -200,7 +200,7 @@ itcl::class DI::DependencyInjector {
             configureProp $obj $prop [getRefOrValue $_propArray($propName)] 
         }
         
-        if {[$obj isa DI::BeanFactory]} {
+        if {[$obj isa DI::FactoryBean]} {
             $obj configure -FACTORY $this 
         }
         if {[$obj isa DI::Bean]} {

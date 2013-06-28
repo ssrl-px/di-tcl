@@ -4,7 +4,7 @@
 package provide DependencyInjector 3.1
 package require Itcl
 
-itcl::class DI::BeanFactory {
+itcl::class DI::FactoryBean {
 
     inherit DI::Bean
 

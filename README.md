@@ -126,19 +126,30 @@ class takes a property, 'bean', which refers to another bean in the configuratio
 of the BeanFactory. 
 
 If a bean in the configuration file needs the BeanFactory object itself, then
-preceed the bean name of the factory with an ampersand.  In this case, calling the 'getObject' method on BeanFactory
-object from the application code will generate new instances if beans without having access or knowledge of the configuration file. 
+preceed the bean name of the factory with an ampersand.  In this case, from the application code, call the 'getObject' method on the BeanFactory
+to generate new instances of beans without having access or knowledge of the configuration file. 
+
+The following is an example configuration from the test directory:
 
 ```
-spotFinder.(parent)=runScriptManager
-spotFinder.operationFactory(ref)=&spotFinderFactory
-spotFinder.maxConcurrency=20
-spotFinderFactory.(class)=DI::BeanFactory
-spotFinderFactory.bean=spotFinderOp
-spotFinderOp.(class)=Dhs::SpotFinder
-spotFinderOp.(singleton)=false
-```
+#factory bean tests
+hondaFactory.(class)=DI::FactoryBean
+hondaFactory.bean=honda
 
+honda.(class)=Car
+honda.(singleton)=false
+honda.make=civic
+honda.year=2013
+
+
+mazdaFactory.(class)=DI::FactoryBean
+mazdaFactory.bean=mazda3
+
+mazda3.(class)=Car
+mazda3.(singleton)=false
+mazda3.make=mazda
+mazda3.year=
+```
 
 
 ## License

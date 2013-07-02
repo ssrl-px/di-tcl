@@ -1,0 +1,65 @@
+#!/usr/bin/tclsh
+#
+package require Itcl
+namespace import ::itcl::*
+package require DependencyInjector 3.2
+package require tcltest
+
+class Car {
+    inherit DI::Bean
+    public variable make
+    public variable year
+
+    public method afterPropertiesSet {} {
+        assertPropertyNotEmpty make
+        assertPropertyNotEmpty year
+    }
+}
+
+variable SETUP {
+    set filename ../resources/Factories.properties
+    set __di [DI::DependencyInjector #auto]
+    $__di load $filename
+}
+
+variable CLEANUP {
+    delete object $__di
+    delete object $obj1
+}
+
+#Test BeanFactory
+tcltest::test createObjectFromFactory {normal return} \
+    -setup $SETUP -cleanup $CLEANUP \
+    -body {
+    set carFactory [$__di createObjectByName &hondaFactory]
+    set obj1 [$carFactory getObject]
+    
+    delete object $carFactory
+
+    return [$obj1 cget -make]    
+} -result civic
+
+#Test BeanFactory
+tcltest::test errorFromFactory {normal return} \
+    -setup $SETUP \
+    -body {
+    set carFactory [$__di createObjectByName &mazdaFactory]
+    set obj1 [$carFactory getObject]
+    
+    delete object $carFactory
+
+    return [$obj1 cget -make]    
+} -returnCodes 1 -result "'mazda3.year' must be set"
+
+#Test BeanFactory using the factory bean name to generate a car
+tcltest::test getCarFromFactory {normal return} \
+    -setup $SETUP \
+    -body {
+
+    set obj1 [$__di createObjectByName hondaFactory]
+
+    return [$obj1 cget -make]    
+} -result civic
+
+
+tcltest::cleanupTests

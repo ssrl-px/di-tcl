@@ -1,5 +1,5 @@
 #
-package provide DependencyInjector 3.2
+package provide DependencyInjector 3.3
 package require Itcl
 
 # ===================================================
@@ -17,10 +17,12 @@ itcl::class DI::DependencyInjector {
 
     private variable _singletonArray
     private variable _propArray
+    private variable _importArray
 
     constructor { } {
         array set _singletonArray {}
         array set _propArray {}
+        array set _importArray {}
     }
 
     public method load { filename } {
@@ -43,8 +45,19 @@ itcl::class DI::DependencyInjector {
             #foreach {rawProp rawValue} [split $trimLine =] {}
             set prop [string trim $rawProp]
             set val [string trim $rawValue]
-            
-            set _propArray($prop) $val
+
+            if {$prop == "@import"} {
+                set dir [file dirname $filename]
+                set importFile [file join $dir $val]
+                #guard against self recursive imports
+                if { [info exists _importArray($importFile)] } {
+                    continue;
+                }
+                set _importArray($importFile) loaded
+                load $importFile
+            } else {
+                set _propArray($prop) $val
+            }
             #lappend clean $trimLine
         }    
 
@@ -207,7 +220,7 @@ itcl::class DI::DependencyInjector {
             $obj configure -FACTORY $this 
         }
         if {[$obj isa DI::Bean]} {
-            puts "BEAN $name"
+            #puts "BEAN $name"
             $obj configure -beanName $name
             $obj configure -WORKSPACE $WORKSPACE
             if { ! $isParent } {

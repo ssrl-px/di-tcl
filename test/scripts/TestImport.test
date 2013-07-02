@@ -1,0 +1,66 @@
+#!/usr/bin/tclsh
+#
+package require Itcl
+namespace import ::itcl::*
+package require DependencyInjector 3.2
+package require tcltest
+
+
+class Person {
+    inherit DI::Bean 
+    public variable first_name
+    public variable last_name
+    public variable middle_name
+    public variable email
+
+    public variable age
+
+}
+
+variable SETUP {
+    set filename ../resources/ImportTop.properties
+    set __di [DI::DependencyInjector #auto]
+    $__di load $filename
+}
+
+variable CLEANUP {
+    delete object $__di
+    delete object $obj1
+}
+
+tcltest::test createObjectWithImport {normal return} \
+    -setup $SETUP -cleanup $CLEANUP \
+    -body {
+    set obj1 [$__di createObjectByName joe]
+    return [$obj1 cget -last_name]
+} -result Suzuki
+
+
+tcltest::test createObjectWithImport2 {normal return} \
+    -setup $SETUP -cleanup $CLEANUP \
+    -body {
+    set obj1 [$__di createObjectByName default_person]
+    return [$obj1 cget -last_name]
+} -result Doe
+
+tcltest::test createObjectWithImport3 {normal return} \
+    -setup $SETUP -cleanup $CLEANUP \
+    -body {
+    set obj1 [$__di createObjectByName default_person]
+    return [$obj1 cget -email]
+} -result johndoe@default.com
+
+
+tcltest::test importSelfReferencingImport {normal return} \
+    -cleanup $CLEANUP \
+    -body {
+    set filename ../resources/ImportSelfReference.properties
+    set __di [DI::DependencyInjector #auto]
+    $__di load $filename
+    set obj1 [$__di createObjectByName default_person]
+    return [$obj1 cget -email]
+} -result johndoe@default.com
+
+
+
+tcltest::cleanupTests

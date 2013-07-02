@@ -8,4 +8,4 @@
 # script is sourced, the variable $dir must contain the
 # full path name of this file's directory.
 
-package ifneeded DependencyInjector 3.2 [list source [file join $dir main scripts Bean.tcl]]\n[list source [file join $dir main scripts StringUtil.tcl]]\n[list source [file join $dir main scripts DependencyInjector.tcl]]\n[list source [file join $dir main scripts FactoryBean.tcl]]
+package ifneeded DependencyInjector 3.3 [list source [file join $dir main scripts Bean.tcl]]\n[list source [file join $dir main scripts StringUtil.tcl]]\n[list source [file join $dir main scripts DependencyInjector.tcl]]\n[list source [file join $dir main scripts FactoryBean.tcl]]

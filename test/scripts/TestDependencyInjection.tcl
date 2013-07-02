@@ -92,7 +92,7 @@ class Car {
 }
 
 variable SETUP {
-    set filename ../resources/DependencyInjectionData.config
+    set filename ../resources/DependencyInjectionData.properties
     set __di [DI::DependencyInjector #auto]
     $__di load $filename
 }

@@ -34,7 +34,10 @@ itcl::class DI::DependencyInjector {
             #guard blank lines and comments
             set trimLine [string trim $line]
             if { $trimLine == "" } continue
-            if { [string index $trimLine 0] == "#" } continue
+
+            #ignore comments
+            set firstChar [string index $trimLine 0]
+            if { $firstChar == "#" || $firstChar == "!" } continue;
 
             foreach {rawProp rawValue} [splitProperty $trimLine] {}
             #foreach {rawProp rawValue} [split $trimLine =] {}

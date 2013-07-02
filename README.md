@@ -4,8 +4,8 @@ di-tcl
 
 Spring inspired dependency injection for Incr Tcl.
 
-###Dependency Injection Engine ('Bean Factory' in Spring terminology)
 
+###Dependency Injection Engine ('Bean Factory' in Spring terminology)
 
 ## Public methods
 * load _propertiesFile_:  Loads a plain text properties file to define all of the spring-like beans
@@ -22,6 +22,15 @@ $di load myObjects.properties
 set myClock [$di createObjectByName clock]
 ```
 
+### Testing install
+
+```
+>cd test/scripts
+>tclsh ./all.tcl
+Tests ended at Mon Jul 01 05:36:23 PM PDT 2013
+all.tcl:        Total   9       Passed  9       Skipped 0       Failed  0
+Sourced 2 Test Files.
+```
 
 
 ###Defining an Incr-tcl bean

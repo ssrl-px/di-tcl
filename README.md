@@ -160,6 +160,26 @@ mazda3.make=mazda
 mazda3.year=
 ```
 
+## Importing files
+
+Use the property '@import=filename.properties' to load additional properties from other
+files into the bean factory. The properties are loaded in the order that they appear
+in the file. Imported files may also import their own files which are loaded before
+the top import is completed. Files that have been previously imported are not imported
+again, which prevents endless recursive imports. Conflicts on properties are always
+resolved by allowing the latest property definition to overwrite previous definitions. It
+is strongly recommended to put all of the imports at the top of a property file.
+
+
+Example:
+
+```
+@import=application.properties
+@import=scripts.properties
+@import=galil.properties
+@import=standard-devices.properties
+@import=microspec.properties
+```
 
 ## License
 
